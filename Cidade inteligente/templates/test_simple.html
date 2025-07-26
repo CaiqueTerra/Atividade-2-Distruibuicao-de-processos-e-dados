@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste Simples - Gateway</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f0f0f0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .status {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            background: #e8f5e8;
+            color: #2e7d2e;
+        }
+        button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #5a6fd8;
+        }
+        .devices, .sensors {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🏙️ Gateway Cidade Inteligente - Teste</h1>
+        
+        <div class="status" id="status">
+            Sistema iniciando...
+        </div>
+
+        <div>
+            <button onclick="testarDispositivos()">Testar Dispositivos</button>
+            <button onclick="testarSensores()">Testar Sensores</button>
+            <button onclick="testarAPI()">Testar API</button>
+        </div>
+
+        <div class="devices">
+            <h2>📡 Dispositivos</h2>
+            <div id="devices-list">Carregando...</div>
+        </div>
+
+        <div class="sensors">
+            <h2>🌡️ Sensores</h2>
+            <div id="sensors-list">Carregando...</div>
+        </div>
+
+        <div>
+            <h3>📋 Console</h3>
+            <pre id="console" style="background: #f5f5f5; padding: 10px; border-radius: 5px; height: 200px; overflow-y: auto;"></pre>
+        </div>
+    </div>
+
+    <script>
+        function log(message) {
+            const console = document.getElementById('console');
+            const timestamp = new Date().toLocaleTimeString();
+            console.textContent += `[${timestamp}] ${message}\n`;
+            console.scrollTop = console.scrollHeight;
+            console.log(message);
+        }
+
+        async function testarAPI() {
+            log('🔄 Testando conexão com API...');
+            
+            try {
+                const response = await fetch('/dispositivos');
+                const data = await response.json();
+                log('✅ API respondeu: ' + JSON.stringify(data, null, 2));
+                return data;
+            } catch (error) {
+                log('❌ Erro na API: ' + error.message);
+                return null;
+            }
+        }
+
+        async function testarDispositivos() {
+            log('🔄 Testando dispositivos...');
+            
+            const devicesList = document.getElementById('devices-list');
+            devicesList.innerHTML = 'Carregando...';
+            
+            try {
+                const data = await testarAPI();
+                
+                if (data && data.dispositivos) {
+                    devicesList.innerHTML = data.dispositivos.map(d => 
+                        `<div>📱 ${d.id} - ${d.tipo} - ${d.status}</div>`
+                    ).join('');
+                    log(`✅ ${data.dispositivos.length} dispositivos encontrados`);
+                } else {
+                    // Dados mock
+                    const mock = [
+                        { id: 'CAM_001', tipo: 'camera', status: 'online' },
+                        { id: 'POST_001', tipo: 'poste', status: 'online' },
+                        { id: 'SEM_001', tipo: 'semaforo', status: 'offline' }
+                    ];
+                    
+                    devicesList.innerHTML = mock.map(d => 
+                        `<div>📱 ${d.id} - ${d.tipo} - ${d.status} (mock)</div>`
+                    ).join('');
+                    log('⚠️ Usando dados mock para dispositivos');
+                }
+            } catch (error) {
+                devicesList.innerHTML = '❌ Erro ao carregar dispositivos';
+                log('❌ Erro: ' + error.message);
+            }
+        }
+
+        async function testarSensores() {
+            log('🔄 Testando sensores...');
+            
+            const sensorsList = document.getElementById('sensors-list');
+            sensorsList.innerHTML = 'Carregando...';
+            
+            try {
+                const response = await fetch('/sensores');
+                const data = await response.json();
+                
+                if (data && (data.temperatura || data.qualidade_ar)) {
+                    let content = '';
+                    if (data.temperatura) {
+                        content += `<div>🌡️ Temperatura: ${data.temperatura[0]?.valor}°C</div>`;
+                    }
+                    if (data.qualidade_ar) {
+                        content += `<div>🌬️ Ar: ${data.qualidade_ar[0]?.qualidade}</div>`;
+                    }
+                    sensorsList.innerHTML = content;
+                    log('✅ Dados de sensores recebidos');
+                } else {
+                    // Dados mock
+                    sensorsList.innerHTML = `
+                        <div>🌡️ Temperatura: 25.5°C (mock)</div>
+                        <div>🌬️ Qualidade do Ar: BOA (mock)</div>
+                    `;
+                    log('⚠️ Usando dados mock para sensores');
+                }
+            } catch (error) {
+                sensorsList.innerHTML = '❌ Erro ao carregar sensores';
+                log('❌ Erro: ' + error.message);
+            }
+        }
+
+        // Inicialização
+        document.addEventListener('DOMContentLoaded', function() {
+            log('🚀 Página carregada, iniciando testes...');
+            
+            const status = document.getElementById('status');
+            status.textContent = 'Sistema online - Clique nos botões para testar';
+            status.style.background = '#e8f5e8';
+            status.style.color = '#2e7d2e';
+            
+            // Teste automático inicial
+            setTimeout(() => {
+                testarDispositivos();
+                testarSensores();
+            }, 1000);
+        });
+    </script>
+</body>
+</html>

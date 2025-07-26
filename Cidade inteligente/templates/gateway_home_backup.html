@@ -1,0 +1,2156 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gateway Cidade Inteligente</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1rem 2rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .header h1 {
+            color: #2d3748;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+
+        .header h1 i {
+            color: #667eea;
+            font-size: 2rem;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .stat-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #718096;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: #718096;
+        }
+
+        .devices-section {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            margin-bottom: 2rem;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #2d3748;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 0.8rem;
+            flex-wrap: wrap;
+        }
+
+        .refresh-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 0.7rem 1.2rem;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .refresh-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .refresh-btn.btn-success {
+            background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+        }
+
+        .refresh-btn.btn-success:hover {
+            box-shadow: 0 6px 20px rgba(72, 187, 120, 0.3);
+        }
+
+        .devices-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .device-card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .device-card:hover {
+            border-color: #667eea;
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.15);
+        }
+
+        /* Indicadores de status em tempo real */
+        .status-indicator {
+            background: #f7fafc;
+            border-left: 4px solid #667eea;
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 8px;
+            font-size: 0.9rem;
+        }
+
+        .status-indicator p {
+            margin: 0.3rem 0;
+            color: #2d3748;
+        }
+
+        .status-indicator strong {
+            color: #4a5568;
+        }
+
+        .device-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .device-name {
+            font-weight: 700;
+            color: #2d3748;
+            font-size: 1.1rem;
+        }
+
+        .device-type {
+            font-size: 0.8rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .device-type.camera { background: #e3f2fd; color: #1976d2; }
+        .device-type.poste { background: #fff3e0; color: #f57c00; }
+        .device-type.semaforo { background: #e8f5e8; color: #388e3c; }
+        .device-type.sensor { background: #fce4ec; color: #c2185b; }
+        .device-type.sensor-temperatura { background: #ffebee; color: #d32f2f; }
+        .device-type.sensor-qualidade { background: #e0f2f1; color: #00695c; }
+
+        .device-info {
+            margin-bottom: 1rem;
+        }
+
+        .device-info p {
+            margin: 0.25rem 0;
+            font-size: 0.9rem;
+            color: #718096;
+        }
+
+        .device-controls {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .control-btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+            color: white;
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, #ed8936 0%, #dd6b20 100%);
+            color: white;
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #f56565 0%, #e53e3e 100%);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #a0aec0 0%, #718096 100%);
+            color: white;
+        }
+
+        .control-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Estilos específicos para tipos de dispositivos e sensores */
+        .device-camera {
+            border-left: 4px solid #667eea;
+        }
+
+        .device-streetlight {
+            border-left: 4px solid #f093fb;
+        }
+
+        .device-traffic-light {
+            border-left: 4px solid #4facfe;
+        }
+
+        .sensor-temperatura {
+            border-left: 4px solid #fa709a;
+            background: linear-gradient(135deg, rgba(250, 112, 154, 0.05) 0%, rgba(254, 225, 64, 0.05) 100%);
+        }
+
+        .sensor-qualidade {
+            border-left: 4px solid #43e97b;
+            background: linear-gradient(135deg, rgba(67, 233, 123, 0.05) 0%, rgba(56, 249, 215, 0.05) 100%);
+        }
+
+        .sensor-info {
+            background: rgba(0, 0, 0, 0.05);
+            border-radius: 8px;
+            padding: 0.75rem;
+            margin-top: 0.5rem;
+        }
+
+        .sensor-info p {
+            margin: 0.25rem 0;
+            font-size: 0.85rem;
+            color: #4a5568;
+        }
+
+        .sensor-info strong {
+            color: #2d3748;
+        }
+
+        /* Estilos para gráficos */
+        .charts-section {
+            margin-bottom: 2rem;
+            display: block !important;
+            visibility: visible !important;
+        }
+
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1rem;
+        }
+
+        .chart-card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .chart-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            border-bottom: 1px solid #e2e8f0;
+            padding-bottom: 0.75rem;
+        }
+
+        .chart-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #2d3748;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .chart-title i {
+            color: #667eea;
+        }
+
+        .chart-info {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+        }
+
+        .current-value {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #2d3748;
+        }
+
+        .chart-trend {
+            font-size: 0.85rem;
+            padding: 0.2rem 0.5rem;
+            border-radius: 20px;
+            font-weight: 600;
+            margin-top: 0.25rem;
+        }
+
+        .trend-up {
+            background: #fed7d7;
+            color: #c53030;
+        }
+
+        .trend-down {
+            background: #c6f6d5;
+            color: #22543d;
+        }
+
+        .trend-stable {
+            background: #e2e8f0;
+            color: #4a5568;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 250px;
+            width: 100%;
+            background: #f8f9fa;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+        }
+
+        #charts-toggle.active {
+            background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+        }
+
+        /* Estilos para modais */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 16px;
+            padding: 0;
+            max-width: 600px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: slideIn 0.3s ease;
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1.5rem 2rem;
+            border-radius: 16px 16px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h3 {
+            margin: 0;
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: background-color 0.2s ease;
+        }
+
+        .modal-close:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .modal-body {
+            padding: 2rem;
+        }
+
+        .modal-footer {
+            padding: 1rem 2rem 2rem;
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+        }
+
+        .control-group {
+            margin-bottom: 2rem;
+        }
+
+        .control-group label {
+            display: block;
+            margin-bottom: 0.8rem;
+            font-weight: 600;
+            color: #2d3748;
+            font-size: 1rem;
+        }
+
+        .slider-container {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            background: #f7fafc;
+            border-radius: 12px;
+        }
+
+        .slider-container input[type="range"] {
+            flex: 1;
+            height: 8px;
+            background: #e2e8f0;
+            border-radius: 4px;
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        .slider-container input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 24px;
+            height: 24px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+        }
+
+        .slider-container span {
+            font-weight: 700;
+            color: #2d3748;
+            min-width: 50px;
+            text-align: center;
+            font-size: 1.1rem;
+        }
+
+        .quick-actions {
+            display: flex;
+            gap: 0.8rem;
+            flex-wrap: wrap;
+        }
+
+        .preset-buttons {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .preset-btn {
+            padding: 0.5rem 1rem;
+            border: 2px solid #e2e8f0;
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            color: #4a5568;
+            transition: all 0.2s ease;
+        }
+
+        .preset-btn:hover {
+            border-color: #667eea;
+            color: #667eea;
+            transform: translateY(-1px);
+        }
+
+        .timing-controls {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+        }
+
+        .timing-input {
+            background: #f7fafc;
+            padding: 1rem;
+            border-radius: 12px;
+            border: 2px solid #e2e8f0;
+            transition: all 0.2s ease;
+        }
+
+        .timing-input:focus-within {
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .timing-input label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .timing-input input {
+            width: 100%;
+            padding: 0.7rem;
+            border: none;
+            border-radius: 8px;
+            background: white;
+            font-size: 1rem;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .resolution-buttons {
+            display: flex;
+            gap: 0.8rem;
+            flex-wrap: wrap;
+        }
+
+        /* Notificações */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: white;
+            border-radius: 12px;
+            padding: 1rem 1.5rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+            border-left: 4px solid;
+            z-index: 1001;
+            transform: translateX(100%);
+            opacity: 0;
+            transition: all 0.3s ease;
+            max-width: 400px;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+            opacity: 1;
+        }
+
+        .notification.success {
+            border-left-color: #48bb78;
+        }
+
+        .notification.error {
+            border-left-color: #f56565;
+        }
+
+        .notification-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .notification-content button {
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            cursor: pointer;
+            color: #a0aec0;
+            padding: 0;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideIn {
+            from { transform: translateY(-50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .sensor-data {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .sensor-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .sensor-card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        .sensor-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #2d3748;
+            margin: 0.5rem 0;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 2rem;
+            color: #718096;
+        }
+
+        .status-online {
+            color: #48bb78;
+        }
+
+        .status-offline {
+            color: #f56565;
+        }
+
+        .timestamp {
+            font-size: 0.8rem;
+            color: #a0aec0;
+            margin-top: 0.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 1rem;
+            }
+            
+            .header {
+                padding: 1rem;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .devices-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .chart-card {
+                padding: 1rem;
+            }
+
+            .chart-container {
+                height: 200px;
+            }
+
+            .chart-header {
+                flex-direction: column;
+                gap: 0.5rem;
+                align-items: flex-start;
+            }
+
+            .chart-info {
+                align-items: flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>
+            <i class="fas fa-city"></i>
+            Gateway Cidade Inteligente
+        </h1>
+    </div>
+
+    <div class="container">
+        <!-- INFORMAÇÕES E CONTROLES ANTIGOS -->
+        <div class="devices-section">
+            <div class="section-header">
+                <h2 class="section-title">
+                    <i class="fas fa-microchip"></i>
+                    Dispositivos Conectados (<span id="total-devices-header">0</span>)
+                </h2>
+                <div class="header-actions">
+                    <button class="refresh-btn" onclick="testarAtualizacao()" title="Teste manual" style="background: linear-gradient(135deg, #f56565 0%, #e53e3e 100%);">
+                        <i class="fas fa-bug"></i>
+                        TESTE
+                    </button>
+                    <button class="refresh-btn" onclick="atualizarDispositivos()" title="Atualizar lista">
+                        <i class="fas fa-sync-alt"></i>
+                        Atualizar
+                    </button>
+                    <button class="refresh-btn btn-success" onclick="descobrirDispositivos()" title="Descobrir novos dispositivos">
+                        <i class="fas fa-search"></i>
+                        Descobrir
+                    </button>
+                </div>
+            </div>
+            <div id="devices-container" class="devices-grid">
+                <div class="loading">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    Carregando dispositivos...
+                </div>
+            </div>
+        </div>
+
+        <!-- Dados dos Sensores -->
+        <div class="sensor-data">
+            <div class="section-header">
+                <h2 class="section-title">
+                    <i class="fas fa-chart-line"></i>
+                    Dados dos Sensores em Tempo Real
+                </h2>
+                <button class="refresh-btn" onclick="atualizarSensores()">
+                    <i class="fas fa-sync-alt"></i>
+                    Atualizar
+                </button>
+            </div>
+            <div id="sensor-container" class="sensor-grid">
+                <div class="loading">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    Carregando dados dos sensores...
+                </div>
+            </div>
+        </div>
+
+        <!-- Dispositivos Conectados -->
+        <div class="devices-section">
+            <div class="section-header">
+                <h2 class="section-title">
+                    <i class="fas fa-microchip"></i>
+                    Dispositivos Conectados (<span id="total-devices-header">0</span>)
+                </h2>
+                <div class="header-actions">
+                    <button class="refresh-btn" onclick="testarAtualizacao()" title="Teste manual" style="background: linear-gradient(135deg, #f56565 0%, #e53e3e 100%);">
+                        <i class="fas fa-bug"></i>
+                        TESTE
+                    </button>
+                    <button class="refresh-btn" onclick="atualizarDispositivos()" title="Atualizar lista">
+                        <i class="fas fa-sync-alt"></i>
+                        Atualizar
+                    </button>
+                    <button class="refresh-btn btn-success" onclick="descobrirDispositivos()" title="Descobrir novos dispositivos">
+                        <i class="fas fa-search"></i>
+                        Descobrir
+                    </button>
+                </div>
+            </div>
+            <div id="devices-container" class="devices-grid">
+                <div class="loading">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    Carregando dispositivos...
+                </div>
+            </div>
+        </div>
+
+        <!-- Dados dos Sensores -->
+        <div class="sensor-data">
+            <div class="section-header">
+                <h2 class="section-title">
+                    <i class="fas fa-chart-line"></i>
+                    Dados dos Sensores em Tempo Real
+                </h2>
+                <button class="refresh-btn" onclick="atualizarSensores()">
+                    <i class="fas fa-sync-alt"></i>
+                    Atualizar
+                </button>
+            </div>
+            <div id="sensor-container" class="sensor-grid">
+                <div class="loading">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    Carregando dados dos sensores...
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+
+    <script>
+        class GatewayAPI {
+            static async get(endpoint) {
+                try {
+                    const response = await fetch(`/api${endpoint}`);
+                    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                    return await response.json();
+                } catch (error) {
+                    console.error('Erro na API:', error);
+                    throw error;
+                }
+            }
+
+            static async post(endpoint, data) {
+                try {
+                    const response = await fetch(`/api${endpoint}`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(data)
+                    });
+                    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                    return await response.json();
+                } catch (error) {
+                    console.error('Erro na API:', error);
+                    throw error;
+                }
+            }
+        }
+
+        // Funções de controle de dispositivos
+        async function controlarCamera(deviceId, acao, params = {}) {
+            try {
+                const data = { acao, ...params };
+                const result = await GatewayAPI.post(`/camera/${deviceId}/controle`, data);
+                mostrarNotificacao(`📹 ${deviceId}: ${result.resultado || 'Comando executado com sucesso'}`, 'success');
+                setTimeout(() => {
+                    atualizarDispositivos();
+                    atualizarEstadosDispositivos();
+                }, 1000);
+            } catch (error) {
+                mostrarNotificacao(`❌ Erro em ${deviceId}: ${error.message}`, 'error');
+            }
+        }
+
+        async function controlarPoste(deviceId, acao, params = {}) {
+            try {
+                const data = { acao, ...params };
+                const result = await GatewayAPI.post(`/poste/${deviceId}/controle`, data);
+                mostrarNotificacao(`💡 ${deviceId}: ${result.resultado || 'Comando executado com sucesso'}`, 'success');
+                setTimeout(() => {
+                    atualizarDispositivos();
+                    atualizarEstadosDispositivos();
+                }, 1000);
+            } catch (error) {
+                mostrarNotificacao(`❌ Erro em ${deviceId}: ${error.message}`, 'error');
+            }
+        }
+
+        async function controlarSemaforo(deviceId, acao, params = {}) {
+            try {
+                const data = { acao, ...params };
+                const result = await GatewayAPI.post(`/semaforo/${deviceId}/controle`, data);
+                mostrarNotificacao(`🚦 ${deviceId}: ${result.resultado || 'Comando executado com sucesso'}`, 'success');
+                setTimeout(() => {
+                    atualizarDispositivos();
+                    atualizarEstadosDispositivos();
+                }, 1000);
+            } catch (error) {
+                mostrarNotificacao(`❌ Erro em ${deviceId}: ${error.message}`, 'error');
+            }
+        }
+
+        // Função para mostrar notificações elegantes
+        function mostrarNotificacao(mensagem, tipo = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `notification ${tipo}`;
+            notification.innerHTML = `
+                <div class="notification-content">
+                    <span>${mensagem}</span>
+                    <button onclick="this.parentElement.parentElement.remove()">×</button>
+                </div>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.classList.add('show');
+            }, 100);
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+                setTimeout(() => notification.remove(), 300);
+            }, 4000);
+        }
+
+        // Função para controle avançado de poste
+        function mostrarControlePoste(deviceId) {
+            const modal = document.createElement('div');
+            modal.className = 'modal-overlay';
+            modal.innerHTML = `
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3>💡 Controle Avançado - ${deviceId}</h3>
+                        <button class="modal-close" onclick="this.closest('.modal-overlay').remove()">×</button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="control-group">
+                            <label>Intensidade da Lâmpada:</label>
+                            <div class="slider-container">
+                                <input type="range" id="intensidade-slider" min="0" max="100" value="100" 
+                                       oninput="document.getElementById('intensidade-value').textContent = this.value + '%'">
+                                <span id="intensidade-value">100%</span>
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label>Ações Rápidas:</label>
+                            <div class="quick-actions">
+                                <button class="control-btn btn-success" onclick="controlarPoste('${deviceId}', 'ligar'); this.closest('.modal-overlay').remove();">
+                                    <i class="fas fa-lightbulb"></i> Ligar Lâmpada
+                                </button>
+                                <button class="control-btn btn-danger" onclick="controlarPoste('${deviceId}', 'desligar'); this.closest('.modal-overlay').remove();">
+                                    <i class="fas fa-power-off"></i> Desligar Lâmpada
+                                </button>
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label>Intensidades Pré-definidas:</label>
+                            <div class="preset-buttons">
+                                <button class="preset-btn" onclick="document.getElementById('intensidade-slider').value = 25; document.getElementById('intensidade-value').textContent = '25%';">25%</button>
+                                <button class="preset-btn" onclick="document.getElementById('intensidade-slider').value = 50; document.getElementById('intensidade-value').textContent = '50%';">50%</button>
+                                <button class="preset-btn" onclick="document.getElementById('intensidade-slider').value = 75; document.getElementById('intensidade-value').textContent = '75%';">75%</button>
+                                <button class="preset-btn" onclick="document.getElementById('intensidade-slider').value = 100; document.getElementById('intensidade-value').textContent = '100%';">100%</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="control-btn btn-primary" onclick="
+                            const intensidade = document.getElementById('intensidade-slider').value;
+                            controlarPoste('${deviceId}', 'intensidade', {intensidade: parseInt(intensidade)});
+                            this.closest('.modal-overlay').remove();
+                        ">
+                            <i class="fas fa-check"></i> Aplicar Intensidade
+                        </button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+        }
+
+        // Função para controle avançado de câmera
+        function mostrarControleCamera(deviceId) {
+            const modal = document.createElement('div');
+            modal.className = 'modal-overlay';
+            modal.innerHTML = `
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3>📹 Controle Avançado - ${deviceId}</h3>
+                        <button class="modal-close" onclick="this.closest('.modal-overlay').remove()">×</button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="control-group">
+                            <label>Controle de Energia:</label>
+                            <div class="quick-actions">
+                                <button class="control-btn btn-success" onclick="controlarCamera('${deviceId}', 'ligar'); this.closest('.modal-overlay').remove();">
+                                    <i class="fas fa-power-off"></i> Ligar Câmera
+                                </button>
+                                <button class="control-btn btn-danger" onclick="controlarCamera('${deviceId}', 'desligar'); this.closest('.modal-overlay').remove();">
+                                    <i class="fas fa-power-off"></i> Desligar Câmera
+                                </button>
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label>Resolução:</label>
+                            <div class="resolution-buttons">
+                                <button class="control-btn btn-primary" onclick="controlarCamera('${deviceId}', 'resolucao', {resolucao: 'HD'}); this.closest('.modal-overlay').remove();">HD</button>
+                                <button class="control-btn btn-primary" onclick="controlarCamera('${deviceId}', 'resolucao', {resolucao: 'FullHD'}); this.closest('.modal-overlay').remove();">Full HD</button>
+                                <button class="control-btn btn-primary" onclick="controlarCamera('${deviceId}', 'resolucao', {resolucao: '4K'}); this.closest('.modal-overlay').remove();">4K</button>
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label>Gravação:</label>
+                            <div class="quick-actions">
+                                <button class="control-btn btn-warning" onclick="controlarCamera('${deviceId}', 'iniciar_gravacao'); this.closest('.modal-overlay').remove();">
+                                    <i class="fas fa-record-vinyl"></i> Iniciar Gravação
+                                </button>
+                                <button class="control-btn btn-secondary" onclick="controlarCamera('${deviceId}', 'parar_gravacao'); this.closest('.modal-overlay').remove();">
+                                    <i class="fas fa-stop"></i> Parar Gravação
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+        }
+
+        // Função para controle avançado de semáforo  
+        function mostrarControleSemaforo(deviceId) {
+            const modal = document.createElement('div');
+            modal.className = 'modal-overlay';
+            modal.innerHTML = `
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3>🚦 Controle Avançado - ${deviceId}</h3>
+                        <button class="modal-close" onclick="this.closest('.modal-overlay').remove()">×</button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="control-group">
+                            <label>Controle de Sistema:</label>
+                            <div class="quick-actions">
+                                <button class="control-btn btn-success" onclick="controlarSemaforo('${deviceId}', 'ligar'); this.closest('.modal-overlay').remove();">
+                                    <i class="fas fa-play"></i> Ligar Semáforo
+                                </button>
+                                <button class="control-btn btn-danger" onclick="controlarSemaforo('${deviceId}', 'desligar'); this.closest('.modal-overlay').remove();">
+                                    <i class="fas fa-stop"></i> Desligar Semáforo
+                                </button>
+                                <button class="control-btn btn-warning" onclick="controlarSemaforo('${deviceId}', 'emergencia'); this.closest('.modal-overlay').remove();">
+                                    <i class="fas fa-exclamation-triangle"></i> Modo Emergência
+                                </button>
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label>Configuração de Tempos:</label>
+                            <div class="timing-controls">
+                                <div class="timing-input">
+                                    <label>🔴 Vermelho (s):</label>
+                                    <input type="number" id="tempo-vermelho" value="30" min="5" max="120">
+                                </div>
+                                <div class="timing-input">
+                                    <label>🟢 Verde (s):</label>
+                                    <input type="number" id="tempo-verde" value="25" min="5" max="120">
+                                </div>
+                                <div class="timing-input">
+                                    <label>🟡 Amarelo (s):</label>
+                                    <input type="number" id="tempo-amarelo" value="5" min="2" max="10">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label>Configurações Pré-definidas:</label>
+                            <div class="preset-buttons">
+                                <button class="preset-btn" onclick="
+                                    document.getElementById('tempo-vermelho').value = 30;
+                                    document.getElementById('tempo-verde').value = 25;
+                                    document.getElementById('tempo-amarelo').value = 5;
+                                ">Padrão</button>
+                                <button class="preset-btn" onclick="
+                                    document.getElementById('tempo-vermelho').value = 45;
+                                    document.getElementById('tempo-verde').value = 35;
+                                    document.getElementById('tempo-amarelo').value = 5;
+                                ">Movimento Alto</button>
+                                <button class="preset-btn" onclick="
+                                    document.getElementById('tempo-vermelho').value = 20;
+                                    document.getElementById('tempo-verde').value = 15;
+                                    document.getElementById('tempo-amarelo').value = 3;
+                                ">Movimento Baixo</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="control-btn btn-primary" onclick="
+                            const tempos = {
+                                tempo_vermelho: parseInt(document.getElementById('tempo-vermelho').value),
+                                tempo_verde: parseInt(document.getElementById('tempo-verde').value),
+                                tempo_amarelo: parseInt(document.getElementById('tempo-amarelo').value)
+                            };
+                            controlarSemaforo('${deviceId}', 'tempos', {tempos});
+                            this.closest('.modal-overlay').remove();
+                        ">
+                            <i class="fas fa-check"></i> Aplicar Configuração
+                        </button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+        }
+
+        // Função para criar card de dispositivo
+        function criarCardDispositivo(dispositivo) {
+            const { id, tipo, ip, porta_grpc, endereco, protocolo, porta_amqp, queue, valor_atual, ultima_leitura, nivel_risco, co2, pm25, pm10 } = dispositivo;
+            
+            let controles = '';
+            let tipoClass = tipo.toLowerCase();
+            
+            switch (tipo) {
+                case 'CAMERA':
+                    controles = `
+                        <button class="control-btn btn-success" onclick="controlarCamera('${id}', 'ligar')">
+                            <i class="fas fa-power-off"></i> Ligar
+                        </button>
+                        <button class="control-btn btn-danger" onclick="controlarCamera('${id}', 'desligar')">
+                            <i class="fas fa-power-off"></i> Desligar
+                        </button>
+                        <button class="control-btn btn-primary" onclick="mostrarControleCamera('${id}')">
+                            <i class="fas fa-cogs"></i> Controle Avançado
+                        </button>
+                        <button class="control-btn btn-warning" onclick="controlarCamera('${id}', 'iniciar_gravacao')">
+                            <i class="fas fa-record-vinyl"></i> Gravar
+                        </button>
+                    `;
+                    break;
+                case 'POSTE':
+                    controles = `
+                        <button class="control-btn btn-success" onclick="controlarPoste('${id}', 'ligar')">
+                            <i class="fas fa-lightbulb"></i> Ligar
+                        </button>
+                        <button class="control-btn btn-danger" onclick="controlarPoste('${id}', 'desligar')">
+                            <i class="fas fa-power-off"></i> Desligar
+                        </button>
+                        <button class="control-btn btn-primary" onclick="mostrarControlePoste('${id}')">
+                            <i class="fas fa-sliders-h"></i> Intensidade
+                        </button>
+                        <button class="control-btn btn-secondary" onclick="controlarPoste('${id}', 'intensidade', {intensidade: 50})">
+                            <i class="fas fa-adjust"></i> 50%
+                        </button>
+                    `;
+                    break;
+                case 'SEMAFORO':
+                    controles = `
+                        <button class="control-btn btn-success" onclick="controlarSemaforo('${id}', 'ligar')">
+                            <i class="fas fa-play"></i> Ligar
+                        </button>
+                        <button class="control-btn btn-danger" onclick="controlarSemaforo('${id}', 'desligar')">
+                            <i class="fas fa-stop"></i> Desligar
+                        </button>
+                        <button class="control-btn btn-warning" onclick="controlarSemaforo('${id}', 'emergencia')">
+                            <i class="fas fa-exclamation-triangle"></i> Emergência
+                        </button>
+                        <button class="control-btn btn-primary" onclick="mostrarControleSemaforo('${id}')">
+                            <i class="fas fa-cogs"></i> Configurar
+                        </button>
+                    `;
+                    break;
+                case 'SENSOR_TEMPERATURA':
+                    tipoClass = 'sensor-temperatura';
+                    controles = `
+                        <div class="sensor-info">
+                            <p><strong>🌡️ Valor Atual:</strong> ${valor_atual || 'N/A'}</p>
+                            <p><strong>📊 Protocolo:</strong> RabbitMQ</p>
+                            <p><strong>📡 Queue:</strong> ${queue || 'N/A'}</p>
+                            <span class="timestamp">Última leitura: ${ultima_leitura ? new Date(ultima_leitura).toLocaleString('pt-BR') : 'N/A'}</span>
+                        </div>
+                    `;
+                    break;
+                case 'SENSOR_QUALIDADE_AR':
+                    tipoClass = 'sensor-qualidade';
+                    
+                    // Definir cores e emojis baseados na qualidade
+                    let qualidadeEmoji = '🌬️';
+                    let qualidadeColor = '#4a5568';
+                    
+                    if (valor_atual) {
+                        switch(valor_atual) {
+                            case 'EXCELENTE':
+                                qualidadeEmoji = '🟢';
+                                qualidadeColor = '#38a169';
+                                break;
+                            case 'BOA':
+                                qualidadeEmoji = '🟢';
+                                qualidadeColor = '#38a169';
+                                break;
+                            case 'MODERADA':
+                                qualidadeEmoji = '🟡';
+                                qualidadeColor = '#d69e2e';
+                                break;
+                            case 'RUIM':
+                                qualidadeEmoji = '🟠';
+                                qualidadeColor = '#dd6b20';
+                                break;
+                            case 'PÉSSIMA':
+                                qualidadeEmoji = '🔴';
+                                qualidadeColor = '#e53e3e';
+                                break;
+                        }
+                    }
+                    
+                    controles = `
+                        <div class="sensor-info">
+                            <p style="color: ${qualidadeColor}; font-weight: bold;">
+                                <strong>${qualidadeEmoji} Qualidade:</strong> ${valor_atual || 'N/A'}
+                            </p>
+                            <p><strong>⚠️ Nível de Risco:</strong> ${nivel_risco || 'N/A'}</p>
+                            <p><strong>💨 CO2:</strong> ${co2 || 'N/A'}ppm</p>
+                            <p><strong>🔬 PM2.5:</strong> ${pm25 || 'N/A'}µg/m³</p>
+                            <p><strong>🔬 PM10:</strong> ${pm10 || 'N/A'}µg/m³</p>
+                            <hr style="margin: 0.5rem 0; border: none; border-top: 1px solid #e2e8f0;">
+                            <p><strong>📊 Protocolo:</strong> RabbitMQ</p>
+                            <p><strong>📡 Queue:</strong> ${queue || 'N/A'}</p>
+                            <span class="timestamp">Última leitura: ${ultima_leitura ? new Date(ultima_leitura).toLocaleString('pt-BR') : 'N/A'}</span>
+                        </div>
+                    `;
+                    break;
+                default:
+                    controles = '<span class="timestamp">Dispositivo - Dados via gRPC</span>';
+            }
+
+            return `
+                <div class="device-card">
+                    <div class="device-header">
+                        <span class="device-name">${id}</span>
+                        <span class="device-type ${tipoClass}">${tipo}</span>
+                    </div>
+                    <div class="device-info">
+                        <p><strong>IP:</strong> ${ip || 'N/A'}</p>
+                        ${tipo.startsWith('SENSOR') ? 
+                            `<p><strong>Protocolo:</strong> ${protocolo || 'RabbitMQ'}</p>
+                             <p><strong>Porta AMQP:</strong> ${porta_amqp || '5672'}</p>` : 
+                            `<p><strong>Porta gRPC:</strong> ${porta_grpc || 'N/A'}</p>`
+                        }
+                        <p><strong>Endereço:</strong> ${endereco || 'N/A'}</p>
+                    </div>
+                    <div class="device-controls">
+                        ${controles}
+                    </div>
+                </div>
+            `;
+        }
+
+        // Função para descobrir novos dispositivos
+        async function descobrirDispositivos() {
+            try {
+                mostrarNotificacao('🔍 Descobrindo dispositivos...', 'info');
+                const result = await GatewayAPI.post('/discovery/descobrir', {});
+                mostrarNotificacao(`✅ Descoberta concluída: ${result.total_encontrados || 'N/A'} dispositivos encontrados`, 'success');
+                setTimeout(() => atualizarDispositivos(), 2000);
+            } catch (error) {
+                mostrarNotificacao(`❌ Erro na descoberta: ${error.message}`, 'error');
+            }
+        }
+
+        // Função de teste simples
+        function testarAtualizacao() {
+            console.log('🧪 TESTE: Iniciando teste manual...');
+            
+            fetch('/api/dispositivos')
+                .then(response => {
+                    console.log('📡 Resposta recebida:', response.status);
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('📊 Dados:', data);
+                    
+                    // Atualizar contador manualmente
+                    const headerElement = document.getElementById('total-devices-header');
+                    if (headerElement) {
+                        headerElement.textContent = data.total || data.dispositivos.length;
+                        console.log('✅ Header atualizado manualmente');
+                    }
+                    
+                    const statElement = document.getElementById('total-devices-stat');
+                    if (statElement) {
+                        statElement.textContent = data.total || data.dispositivos.length;
+                        console.log('✅ Stat atualizado manualmente');
+                    }
+                })
+                .catch(error => {
+                    console.error('❌ Erro no teste:', error);
+                });
+        }
+
+        // Função para atualizar dispositivos com tratamento de erro robusto
+        async function atualizarDispositivos() {
+            console.log('🔄 Iniciando atualização de dispositivos...');
+            
+            try {
+                const data = await GatewayAPI.get('/dispositivos');
+                console.log('📊 Dados recebidos:', data);
+                
+                const container = document.getElementById('devices-container');
+                
+                if (!container) {
+                    console.error('❌ Container de dispositivos não encontrado');
+                    return;
+                }
+                
+                if (data.dispositivos && data.dispositivos.length > 0) {
+                    console.log(`✅ Encontrados ${data.dispositivos.length} dispositivos`);
+                    
+                    container.innerHTML = data.dispositivos
+                        .map(dispositivo => criarCardDispositivo(dispositivo))
+                        .join('');
+                    
+                    // Atualizar contadores
+                    const totalCount = data.total || data.dispositivos.length;
+                    console.log(`📊 Atualizando contadores para: ${totalCount}`);
+                    
+                    // Atualizar card de estatística
+                    const totalStatElement = document.getElementById('total-devices-stat');
+                    if (totalStatElement) {
+                        totalStatElement.textContent = totalCount;
+                        console.log('✅ Stat atualizado');
+                    } else {
+                        console.error('❌ Elemento total-devices-stat não encontrado');
+                    }
+                    
+                    // Atualizar header da seção
+                    const totalHeaderElement = document.getElementById('total-devices-header');
+                    if (totalHeaderElement) {
+                        totalHeaderElement.textContent = totalCount;
+                        console.log('✅ Header atualizado');
+                    } else {
+                        console.error('❌ Elemento total-devices-header não encontrado');
+                    }
+                    
+                    console.log('🎉 Atualização concluída com sucesso!');
+                } else {
+                    console.log('⚠️ Nenhum dispositivo encontrado');
+                    
+                    container.innerHTML = `
+                        <div class="loading">
+                            <i class="fas fa-search"></i>
+                            <p>Nenhum dispositivo encontrado</p>
+                            <button class="control-btn btn-primary" onclick="descobrirDispositivos()">
+                                <i class="fas fa-search"></i> Descobrir Dispositivos
+                            </button>
+                        </div>
+                    `;
+                    
+                    // Zerar contadores
+                    const totalStatElement = document.getElementById('total-devices-stat');
+                    if (totalStatElement) totalStatElement.textContent = '0';
+                    
+                    const totalHeaderElement = document.getElementById('total-devices-header');
+                    if (totalHeaderElement) totalHeaderElement.textContent = '0';
+                }
+            } catch (error) {
+                console.error('❌ Erro ao carregar dispositivos:', error);
+                const container = document.getElementById('devices-container');
+                if (container) {
+                    container.innerHTML = `
+                        <div class="loading">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <p>Erro ao carregar dispositivos: ${error.message}</p>
+                            <button class="control-btn btn-primary" onclick="atualizarDispositivos()">
+                                <i class="fas fa-sync-alt"></i> Tentar Novamente
+                            </button>
+                        </div>
+                    `;
+                }
+            }
+        }
+
+        // Função para atualizar dados dos sensores
+        async function atualizarSensores() {
+            try {
+                const data = await GatewayAPI.get('/sensores/dados');
+                const container = document.getElementById('sensor-container');
+                
+                let html = '';
+                
+                // Temperatura
+                if (data.temperatura && data.temperatura.length > 0) {
+                    const ultimaTemp = data.temperatura[data.temperatura.length - 1];
+                    const mediaTemp = data.temperatura.reduce((sum, item) => sum + item.valor, 0) / data.temperatura.length;
+                    
+                    html += `
+                        <div class="sensor-card">
+                            <h3 style="color: #48bb78; margin-bottom: 1rem;">
+                                <i class="fas fa-thermometer-half"></i> Sensor de Temperatura
+                            </h3>
+                            <div class="sensor-value">${ultimaTemp.valor}°C</div>
+                            <p>Localização: ${ultimaTemp.localizacao}</p>
+                            <p>Média: ${mediaTemp.toFixed(1)}°C</p>
+                            <div class="timestamp">Última leitura: ${new Date(ultimaTemp.timestamp).toLocaleString()}</div>
+                        </div>
+                    `;
+                    
+                    document.getElementById('avg-temperature').textContent = `${mediaTemp.toFixed(1)}°C`;
+                }
+                
+                // Qualidade do Ar
+                if (data.qualidade_ar && data.qualidade_ar.length > 0) {
+                    const ultimaQualidade = data.qualidade_ar[data.qualidade_ar.length - 1];
+                    
+                    html += `
+                        <div class="sensor-card">
+                            <h3 style="color: #ed8936; margin-bottom: 1rem;">
+                                <i class="fas fa-wind"></i> Qualidade do Ar
+                            </h3>
+                            <div class="sensor-value">${ultimaQualidade.qualidade}</div>
+                            <p>CO2: ${ultimaQualidade.co2} ppm</p>
+                            <p>PM2.5: ${ultimaQualidade.pm25} µg/m³</p>
+                            <p>PM10: ${ultimaQualidade.pm10} µg/m³</p>
+                            <div class="timestamp">Última leitura: ${new Date(ultimaQualidade.timestamp).toLocaleString()}</div>
+                        </div>
+                    `;
+                    
+                    document.getElementById('air-quality').textContent = ultimaQualidade.qualidade;
+                }
+                
+                if (html) {
+                    container.innerHTML = html;
+                } else {
+                    container.innerHTML = `
+                        <div class="loading">
+                            <i class="fas fa-chart-line"></i>
+                            Aguardando dados dos sensores...
+                        </div>
+                    `;
+                }
+                
+            } catch (error) {
+                document.getElementById('sensor-container').innerHTML = `
+                    <div class="loading">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        Erro ao carregar sensores: ${error.message}
+                    </div>
+                `;
+            }
+        }
+
+        // === SISTEMA DE GRÁFICOS ===
+        let temperatureChart, airQualityChart, co2Chart, pm25Chart;
+        let chartsAutoUpdate = false;
+        let chartDataHistory = {
+            temperature: [],
+            airQuality: [],
+            co2: [],
+            pm25: []
+        };
+
+        function initializeCharts() {
+            console.log('Inicializando gráficos...');
+            // Configuração comum para todos os gráficos
+            const commonConfig = {
+                type: 'line',
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        x: {
+                            type: 'time',
+                            time: {
+                                unit: 'minute',
+                                displayFormats: {
+                                    minute: 'HH:mm'
+                                }
+                            },
+                            grid: {
+                                color: 'rgba(0,0,0,0.1)'
+                            }
+                        },
+                        y: {
+                            grid: {
+                                color: 'rgba(0,0,0,0.1)'
+                            }
+                        }
+                    },
+                    elements: {
+                        point: {
+                            radius: 4,
+                            hoverRadius: 6
+                        },
+                        line: {
+                            tension: 0.4,
+                            borderWidth: 3
+                        }
+                    },
+                    animation: {
+                        duration: 1000,
+                        easing: 'easeInOutQuart'
+                    }
+                }
+            };
+
+            // Gráfico de Temperatura
+            const tempCtx = document.getElementById('temperatureChart').getContext('2d');
+            temperatureChart = new Chart(tempCtx, {
+                ...commonConfig,
+                data: {
+                    datasets: [{
+                        label: 'Temperatura (°C)',
+                        data: [],
+                        borderColor: '#f56565',
+                        backgroundColor: 'rgba(245, 101, 101, 0.1)',
+                        fill: true
+                    }]
+                },
+                options: {
+                    ...commonConfig.options,
+                    scales: {
+                        ...commonConfig.options.scales,
+                        y: {
+                            ...commonConfig.options.scales.y,
+                            min: 0,
+                            max: 40,
+                            ticks: {
+                                callback: function(value) {
+                                    return value + '°C';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Gráfico de Qualidade do Ar (CO2)
+            const co2Ctx = document.getElementById('co2Chart').getContext('2d');
+            co2Chart = new Chart(co2Ctx, {
+                ...commonConfig,
+                data: {
+                    datasets: [{
+                        label: 'CO2 (ppm)',
+                        data: [],
+                        borderColor: '#667eea',
+                        backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                        fill: true
+                    }]
+                },
+                options: {
+                    ...commonConfig.options,
+                    scales: {
+                        ...commonConfig.options.scales,
+                        y: {
+                            ...commonConfig.options.scales.y,
+                            min: 300,
+                            max: 2000,
+                            ticks: {
+                                callback: function(value) {
+                                    return value + ' ppm';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Gráfico de PM2.5
+            const pm25Ctx = document.getElementById('pm25Chart').getContext('2d');
+            pm25Chart = new Chart(pm25Ctx, {
+                ...commonConfig,
+                data: {
+                    datasets: [{
+                        label: 'PM2.5 (µg/m³)',
+                        data: [],
+                        borderColor: '#38a169',
+                        backgroundColor: 'rgba(56, 161, 105, 0.1)',
+                        fill: true
+                    }]
+                },
+                options: {
+                    ...commonConfig.options,
+                    scales: {
+                        ...commonConfig.options.scales,
+                        y: {
+                            ...commonConfig.options.scales.y,
+                            min: 0,
+                            max: 150,
+                            ticks: {
+                                callback: function(value) {
+                                    return value + ' µg/m³';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Gráfico de Qualidade do Ar (categórico)
+            const airCtx = document.getElementById('airQualityChart').getContext('2d');
+            airQualityChart = new Chart(airCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['EXCELENTE', 'BOA', 'MODERADA', 'RUIM', 'PÉSSIMA'],
+                    datasets: [{
+                        data: [0, 0, 0, 0, 0],
+                        backgroundColor: [
+                            '#38a169',
+                            '#48bb78',
+                            '#d69e2e',
+                            '#dd6b20',
+                            '#e53e3e'
+                        ],
+                        borderWidth: 2,
+                        borderColor: '#fff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                padding: 20,
+                                usePointStyle: true
+                            }
+                        }
+                    }
+                }
+            });
+        function initializeCharts() {
+            console.log('Inicializando gráficos...');
+            
+            try {
+                // Gráfico de Temperatura
+                const tempCtx = document.getElementById('temperatureChart');
+                if (tempCtx) {
+                    console.log('Criando gráfico de temperatura...');
+                    temperatureChart = new Chart(tempCtx, {
+                        type: 'line',
+                        data: {
+                            labels: ['10:00', '10:05', '10:10', '10:15', '10:20'],
+                            datasets: [{
+                                label: 'Temperatura (°C)',
+                                data: [20, 22, 18, 25, 23],
+                                borderColor: '#f56565',
+                                backgroundColor: 'rgba(245, 101, 101, 0.1)',
+                                fill: true,
+                                tension: 0.4
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: {
+                                    display: false
+                                }
+                            },
+                            scales: {
+                                y: {
+                                    min: 0,
+                                    max: 40,
+                                    ticks: {
+                                        callback: function(value) {
+                                            return value + '°C';
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    });
+                    console.log('✅ Gráfico de temperatura criado');
+                } else {
+                    console.error('❌ Canvas temperatureChart não encontrado');
+                }
+
+                // Gráfico de CO2
+                const co2Ctx = document.getElementById('co2Chart');
+                if (co2Ctx) {
+                    console.log('Criando gráfico de CO2...');
+                    co2Chart = new Chart(co2Ctx, {
+                        type: 'line',
+                        data: {
+                            labels: ['10:00', '10:05', '10:10', '10:15', '10:20'],
+                            datasets: [{
+                                label: 'CO2 (ppm)',
+                                data: [400, 450, 520, 480, 550],
+                                borderColor: '#38a169',
+                                backgroundColor: 'rgba(56, 161, 105, 0.1)',
+                                fill: true,
+                                tension: 0.4
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: {
+                                    display: false
+                                }
+                            },
+                            scales: {
+                                y: {
+                                    min: 300,
+                                    max: 1200,
+                                    ticks: {
+                                        callback: function(value) {
+                                            return value + ' ppm';
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    });
+                    console.log('✅ Gráfico de CO2 criado');
+                } else {
+                    console.error('❌ Canvas co2Chart não encontrado');
+                }
+
+                // Gráfico de PM2.5
+                const pm25Ctx = document.getElementById('pm25Chart');
+                if (pm25Ctx) {
+                    console.log('Criando gráfico de PM2.5...');
+                    pm25Chart = new Chart(pm25Ctx, {
+                        type: 'line',
+                        data: {
+                            labels: ['10:00', '10:05', '10:10', '10:15', '10:20'],
+                            datasets: [{
+                                label: 'PM2.5 (µg/m³)',
+                                data: [30, 35, 28, 42, 38],
+                                borderColor: '#ed8936',
+                                backgroundColor: 'rgba(237, 137, 54, 0.1)',
+                                fill: true,
+                                tension: 0.4
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: {
+                                    display: false
+                                }
+                            },
+                            scales: {
+                                y: {
+                                    min: 0,
+                                    max: 150,
+                                    ticks: {
+                                        callback: function(value) {
+                                            return value + ' µg/m³';
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    });
+                    console.log('✅ Gráfico de PM2.5 criado');
+                } else {
+                    console.error('❌ Canvas pm25Chart não encontrado');
+                }
+
+                // Gráfico de Qualidade do Ar
+                const airCtx = document.getElementById('airQualityChart');
+                if (airCtx) {
+                    console.log('Criando gráfico de qualidade do ar...');
+                    airQualityChart = new Chart(airCtx, {
+                        type: 'doughnut',
+                        data: {
+                            labels: ['EXCELENTE', 'BOA', 'MODERADA', 'RUIM', 'PÉSSIMA'],
+                            datasets: [{
+                                data: [1, 2, 3, 1, 0], // Dados de exemplo iniciais
+                                backgroundColor: [
+                                    '#38a169',
+                                    '#68d391',
+                                    '#d69e2e',
+                                    '#dd6b20',
+                                    '#e53e3e'
+                                ],
+                                borderWidth: 2,
+                                borderColor: '#fff'
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: {
+                                    position: 'bottom',
+                                    labels: {
+                                        padding: 20,
+                                        usePointStyle: true
+                                    }
+                                }
+                            }
+                        }
+                    });
+                    console.log('✅ Gráfico de qualidade do ar criado');
+                } else {
+                    console.error('❌ Canvas airQualityChart não encontrado');
+                }
+
+                console.log('🎉 Todos os gráficos inicializados com sucesso!');
+                
+            } catch (error) {
+                console.error('❌ Erro ao inicializar gráficos:', error);
+            }
+        }
+
+        function testCharts() {
+            console.log('=== TESTE DE GRÁFICOS ===');
+            console.log('Chart.js disponível?', typeof Chart !== 'undefined');
+            console.log('temperatureChart:', temperatureChart);
+            console.log('co2Chart:', co2Chart);
+            console.log('pm25Chart:', pm25Chart);
+            console.log('airQualityChart:', airQualityChart);
+            
+            // Verificar se os canvas existem
+            const tempCanvas = document.getElementById('temperatureChart');
+            const co2Canvas = document.getElementById('co2Chart');
+            const pm25Canvas = document.getElementById('pm25Chart');
+            const airCanvas = document.getElementById('airQualityChart');
+            
+            console.log('Canvas temperature:', tempCanvas);
+            console.log('Canvas CO2:', co2Canvas);
+            console.log('Canvas PM2.5:', pm25Canvas);
+            console.log('Canvas air quality:', airCanvas);
+            
+            // Tentar criar um gráfico simples de teste
+            if (tempCanvas && typeof Chart !== 'undefined') {
+                console.log('Criando gráfico de teste...');
+                try {
+                    const testChart = new Chart(tempCanvas, {
+                        type: 'bar',
+                        data: {
+                            labels: ['A', 'B', 'C'],
+                            datasets: [{
+                                label: 'Teste',
+                                data: [10, 20, 30],
+                                backgroundColor: 'red'
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false
+                        }
+                    });
+                    console.log('✅ Gráfico de teste criado!', testChart);
+                } catch (error) {
+                    console.error('❌ Erro ao criar gráfico de teste:', error);
+                }
+            }
+            
+            alert('Verifique o console do navegador para debug dos gráficos!');
+        }
+
+        function updateCharts() {
+            if (!chartsAutoUpdate) return;
+            
+            console.log('Atualizando gráficos...');
+
+            fetch('/api/sensores/dados')
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Dados recebidos:', data);
+                    
+                    // Atualizar dados de temperatura
+                    if (data.temperatura && data.temperatura.length > 0) {
+                        const tempData = data.temperatura.slice(-10); // Últimos 10 pontos
+                        const labels = tempData.map(item => {
+                            const date = new Date(item.timestamp);
+                            return date.toLocaleTimeString('pt-BR', {hour: '2-digit', minute: '2-digit'});
+                        });
+                        const values = tempData.map(item => item.valor);
+                        
+                        temperatureChart.data.labels = labels;
+                        temperatureChart.data.datasets[0].data = values;
+                        temperatureChart.update('none');
+                        
+                        // Atualizar valor atual
+                        const lastTemp = tempData[tempData.length - 1];
+                        if (document.getElementById('temp-current')) {
+                            document.getElementById('temp-current').textContent = `${lastTemp.valor.toFixed(1)}°C`;
+                        }
+                        updateTrend('temp-trend', values);
+                        console.log('✅ Gráfico de temperatura atualizado');
+                    }
+
+                    // Atualizar dados de CO2 e PM2.5
+                    if (data.qualidade_ar && data.qualidade_ar.length > 0) {
+                        const co2Data = data.qualidade_ar.slice(-10);
+                        const labels = co2Data.map(item => {
+                            const date = new Date(item.timestamp);
+                            return date.toLocaleTimeString('pt-BR', {hour: '2-digit', minute: '2-digit'});
+                        });
+                        
+                        // CO2
+                        const co2Values = co2Data.map(item => item.co2);
+                        co2Chart.data.labels = labels;
+                        co2Chart.data.datasets[0].data = co2Values;
+                        co2Chart.update('none');
+                        
+                        // PM2.5
+                        const pm25Values = co2Data.map(item => item.pm25);
+                        pm25Chart.data.labels = labels;
+                        pm25Chart.data.datasets[0].data = pm25Values;
+                        pm25Chart.update('none');
+                        
+                        // Atualizar valores atuais
+                        const lastAir = co2Data[co2Data.length - 1];
+                        if (document.getElementById('co2-current')) {
+                            document.getElementById('co2-current').textContent = `${lastAir.co2.toFixed(0)} ppm`;
+                        }
+                        if (document.getElementById('pm25-current')) {
+                            document.getElementById('pm25-current').textContent = `${lastAir.pm25.toFixed(1)} µg/m³`;
+                        }
+                        if (document.getElementById('air-current')) {
+                            document.getElementById('air-current').textContent = lastAir.qualidade;
+                        }
+                        
+                        updateTrend('co2-trend', co2Values);
+                        updateTrend('pm25-trend', pm25Values);
+                        
+                        // Atualizar gráfico de qualidade do ar
+                        const qualityCounts = { EXCELENTE: 0, BOA: 0, MODERADA: 0, RUIM: 0, PÉSSIMA: 0 };
+                        co2Data.forEach(item => {
+                            if (qualityCounts.hasOwnProperty(item.qualidade)) {
+                                qualityCounts[item.qualidade]++;
+                            }
+                        });
+                        
+                        airQualityChart.data.datasets[0].data = Object.values(qualityCounts);
+                        airQualityChart.update('none');
+                        
+                        console.log('✅ Gráficos de qualidade do ar atualizados');
+                    }
+                })
+                .catch(error => {
+                    console.error('❌ Erro ao atualizar gráficos:', error);
+                });
+        }
+
+        function updateTrend(elementId, values) {
+            if (values.length < 2) return;
+            
+            const recent = values.slice(-3);
+            const avg = recent.reduce((a, b) => a + b, 0) / recent.length;
+            const prev = values.slice(-6, -3);
+            const prevAvg = prev.length > 0 ? prev.reduce((a, b) => a + b, 0) / prev.length : avg;
+            
+            const element = document.getElementById(elementId);
+            const diff = avg - prevAvg;
+            
+            if (Math.abs(diff) < 0.1) {
+                element.textContent = 'Estável';
+                element.className = 'chart-trend trend-stable';
+            } else if (diff > 0) {
+                element.textContent = `↗ +${diff.toFixed(1)}`;
+                element.className = 'chart-trend trend-up';
+            } else {
+                element.textContent = `↘ ${diff.toFixed(1)}`;
+                element.className = 'chart-trend trend-down';
+            }
+        }
+
+        function getAirQualityTrend(quality) {
+            const trends = {
+                'EXCELENTE': 'Ótima',
+                'BOA': 'Boa',
+                'MODERADA': 'Atenção',
+                'RUIM': 'Alerta',
+                'PÉSSIMA': 'Crítico'
+            };
+            return trends[quality] || 'N/A';
+        }
+
+        function getAirQualityTrendClass(quality) {
+            if (quality === 'EXCELENTE' || quality === 'BOA') return 'trend-down';
+            if (quality === 'MODERADA') return 'trend-stable';
+            return 'trend-up';
+        }
+
+        function toggleChartsAutoUpdate() {
+            chartsAutoUpdate = !chartsAutoUpdate;
+            const button = document.getElementById('charts-toggle');
+            const icon = button.querySelector('i');
+            const text = button.querySelector('span');
+            
+            if (chartsAutoUpdate) {
+                button.classList.add('active');
+                icon.className = 'fas fa-pause';
+                text.textContent = 'Auto';
+                updateCharts(); // Atualizar imediatamente
+            } else {
+                button.classList.remove('active');
+                icon.className = 'fas fa-play';
+                text.textContent = 'Auto';
+            }
+        }
+
+        // Função para atualizar estados dos dispositivos em tempo real
+        async function atualizarEstadosDispositivos() {
+            try {
+                const data = await GatewayAPI.get('/devices/states');
+                const deviceStates = data.device_states;
+                
+                // Atualizar cada dispositivo na interface
+                Object.entries(deviceStates).forEach(([deviceId, state]) => {
+                    updateDeviceDisplay(deviceId, state);
+                });
+                
+                console.log('✅ Estados dos dispositivos atualizados');
+            } catch (error) {
+                console.error('❌ Erro ao atualizar estados dos dispositivos:', error);
+            }
+        }
+
+        function updateDeviceDisplay(deviceId, state) {
+            // Encontrar o card do dispositivo na interface
+            const deviceCards = document.querySelectorAll('.device-card');
+            for (const card of deviceCards) {
+                const deviceName = card.querySelector('.device-name');
+                if (deviceName && deviceName.textContent === deviceId) {
+                    updateDeviceCard(card, deviceId, state);
+                    break;
+                }
+            }
+        }
+
+        function updateDeviceCard(card, deviceId, state) {
+            const controlsDiv = card.querySelector('.device-controls');
+            if (!controlsDiv) return;
+            
+            // Criar indicadores de status baseado no tipo
+            let statusIndicator = '';
+            
+            if (state.tipo === 'CAMERA') {
+                const ligadoStatus = state.ligado ? '🟢 LIGADA' : '🔴 DESLIGADA';
+                const gravandoStatus = state.gravando ? '🔴 GRAVANDO' : '⏹️ PARADA';
+                statusIndicator = `
+                    <div class="status-indicator">
+                        <p><strong>Status:</strong> ${ligadoStatus}</p>
+                        <p><strong>Resolução:</strong> ${state.resolucao}</p>
+                        <p><strong>Gravação:</strong> ${gravandoStatus}</p>
+                    </div>
+                `;
+            } else if (state.tipo === 'POSTE_ILUMINACAO') {
+                const ligadoStatus = state.ligado ? '🟢 LIGADO' : '🔴 DESLIGADO';
+                const modoStatus = state.modo_manual ? '🔧 MANUAL' : '🤖 AUTOMÁTICO';
+                statusIndicator = `
+                    <div class="status-indicator">
+                        <p><strong>Status:</strong> ${ligadoStatus}</p>
+                        <p><strong>Intensidade:</strong> ${state.intensidade}%</p>
+                        <p><strong>Modo:</strong> ${modoStatus}</p>
+                    </div>
+                `;
+            } else if (state.tipo === 'SEMAFORO') {
+                const ligadoStatus = state.ligado ? '🟢 LIGADO' : '🔴 DESLIGADO';
+                const emergenciaStatus = state.modo_emergencia ? '🚨 EMERGÊNCIA' : '⏱️ NORMAL';
+                statusIndicator = `
+                    <div class="status-indicator">
+                        <p><strong>Status:</strong> ${ligadoStatus}</p>
+                        <p><strong>Modo:</strong> ${emergenciaStatus}</p>
+                        <p><strong>Tempos:</strong> V:${state.tempos?.verde} A:${state.tempos?.amarelo} R:${state.tempos?.vermelho}</p>
+                    </div>
+                `;
+            }
+            
+            // Encontrar ou criar área de status
+            let statusArea = controlsDiv.querySelector('.status-indicator');
+            if (statusArea) {
+                statusArea.outerHTML = statusIndicator;
+            } else if (statusIndicator) {
+                controlsDiv.insertAdjacentHTML('afterbegin', statusIndicator);
+            }
+        }
+
+        // Inicialização e atualizações automáticas
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM carregado, inicializando componentes...');
+            // Inicializar componentes
+            atualizarDispositivos();
+            atualizarSensores();
+            // Atualizar automaticamente a cada 10 segundos
+            setInterval(() => {
+                atualizarSensores();
+                atualizarEstadosDispositivos(); // Nova função para sincronizar estados
+            }, 10000);
+            // Atualizar dispositivos a cada 30 segundos
+            setInterval(() => {
+                atualizarDispositivos();
+            }, 30000);
+        });
+    </script>
+</body>
+</html>

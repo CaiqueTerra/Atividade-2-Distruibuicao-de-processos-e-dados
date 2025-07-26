@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste de Gráficos</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .chart-container {
+            position: relative;
+            height: 400px;
+            width: 600px;
+            margin: 20px auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>Teste de Gráficos Chart.js</h1>
+    
+    <div class="chart-container">
+        <canvas id="testChart"></canvas>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM carregado');
+            console.log('Chart.js disponível?', typeof Chart !== 'undefined');
+            
+            const ctx = document.getElementById('testChart');
+            console.log('Canvas encontrado?', ctx !== null);
+            
+            if (ctx && typeof Chart !== 'undefined') {
+                const chart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai'],
+                        datasets: [{
+                            label: 'Temperatura',
+                            data: [20, 22, 25, 23, 27],
+                            borderColor: 'rgb(75, 192, 192)',
+                            backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                            tension: 0.1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false
+                    }
+                });
+                console.log('Gráfico criado com sucesso!');
+            } else {
+                console.error('Erro: Canvas ou Chart.js não encontrado');
+            }
+        });
+    </script>
+</body>
+</html>

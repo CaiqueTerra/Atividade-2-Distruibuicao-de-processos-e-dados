@@ -1,0 +1,1237 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gateway Cidade Inteligente</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(15px);
+            padding: 2rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .header h1 {
+            color: #2d3748;
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            font-size: 2.5rem;
+            font-weight: 800;
+            text-align: center;
+            justify-content: center;
+        }
+
+        .header h1 i {
+            color: #667eea;
+            font-size: 3rem;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+
+        /* Dashboard Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(15px);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+        }
+
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .stat-title {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #718096;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: white;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .stat-value {
+            font-size: 3rem;
+            font-weight: 900;
+            color: #2d3748;
+            margin-bottom: 0.5rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-label {
+            font-size: 1rem;
+            color: #718096;
+            font-weight: 500;
+        }
+
+        /* Sections */
+        .section {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(15px);
+            border-radius: 20px;
+            padding: 2.5rem;
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            margin-bottom: 2.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .section-title {
+            font-size: 2rem;
+            font-weight: 800;
+            color: #2d3748;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .section-title i {
+            color: #667eea;
+            font-size: 2.2rem;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1rem;
+            text-decoration: none;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+            box-shadow: 0 4px 15px rgba(72, 187, 120, 0.3);
+        }
+
+        .btn-success:hover {
+            box-shadow: 0 8px 25px rgba(72, 187, 120, 0.4);
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, #ed8936 0%, #dd6b20 100%);
+            box-shadow: 0 4px 15px rgba(237, 137, 54, 0.3);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #f56565 0%, #e53e3e 100%);
+            box-shadow: 0 4px 15px rgba(245, 101, 101, 0.3);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #a0aec0 0%, #718096 100%);
+            box-shadow: 0 4px 15px rgba(160, 174, 192, 0.3);
+        }
+
+        /* Grid Layouts */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+            gap: 2rem;
+        }
+
+        .card {
+            background: linear-gradient(145deg, #ffffff, #f8f9fa);
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            border: 2px solid transparent;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(180deg, #667eea, #764ba2);
+        }
+
+        .card:hover {
+            border-color: #667eea;
+            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.2);
+            transform: translateY(-5px);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-title {
+            font-weight: 800;
+            color: #2d3748;
+            font-size: 1.4rem;
+        }
+
+        .badge {
+            font-size: 0.8rem;
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .badge-camera { background: #e3f2fd; color: #1976d2; }
+        .badge-poste { background: #fff3e0; color: #f57c00; }
+        .badge-semaforo { background: #e8f5e8; color: #388e3c; }
+        .badge-sensor { background: #fce4ec; color: #c2185b; }
+
+        .card-info {
+            margin-bottom: 1.5rem;
+        }
+
+        .card-info p {
+            margin: 0.75rem 0;
+            font-size: 1rem;
+            color: #718096;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-info strong {
+            color: #2d3748;
+            font-weight: 700;
+        }
+
+        .card-controls {
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+            margin-top: 1.5rem;
+        }
+
+        .control-btn {
+            padding: 0.75rem 1.25rem;
+            border: none;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            flex: 1;
+            justify-content: center;
+            min-width: 120px;
+        }
+
+        .control-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Slider para intensidade */
+        .intensity-control {
+            margin: 1rem 0;
+            padding: 1rem;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .intensity-slider {
+            width: 100%;
+            height: 8px;
+            border-radius: 5px;
+            background: #e2e8f0;
+            outline: none;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+        }
+
+        .intensity-slider:hover {
+            opacity: 1;
+        }
+
+        .intensity-slider::-webkit-slider-thumb {
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #667eea;
+            cursor: pointer;
+        }
+
+        .intensity-value {
+            text-align: center;
+            font-weight: 700;
+            color: #667eea;
+            margin-top: 0.5rem;
+        }
+
+        /* Status Indicators */
+        .status-online {
+            color: #48bb78;
+            font-weight: 700;
+        }
+
+        .status-offline {
+            color: #f56565;
+            font-weight: 700;
+        }
+
+        .timestamp {
+            font-size: 0.85rem;
+            color: #a0aec0;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        /* Loading States */
+        .loading {
+            text-align: center;
+            padding: 4rem;
+            color: #718096;
+        }
+
+        .loading i {
+            font-size: 3rem;
+            margin-bottom: 1.5rem;
+            animation: spin 1.5s linear infinite;
+            color: #667eea;
+        }
+
+        .loading p {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        /* Error States */
+        .error {
+            text-align: center;
+            padding: 4rem;
+            color: #f56565;
+        }
+
+        .error i {
+            font-size: 3rem;
+            margin-bottom: 1.5rem;
+        }
+
+        /* Sensor Value Display */
+        .sensor-value {
+            font-size: 3.5rem;
+            font-weight: 900;
+            color: #2d3748;
+            margin: 1rem 0;
+            text-align: center;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .sensor-value.temperature {
+            color: #f56565;
+        }
+
+        .sensor-value.air-quality {
+            color: #38a169;
+        }
+
+        /* Notifications */
+        .notification {
+            position: fixed;
+            top: 30px;
+            right: 30px;
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem 2rem;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+            border-left: 5px solid;
+            z-index: 1001;
+            transform: translateX(120%);
+            opacity: 0;
+            transition: all 0.4s ease;
+            max-width: 450px;
+            min-width: 300px;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+            opacity: 1;
+        }
+
+        .notification.success {
+            border-left-color: #48bb78;
+        }
+
+        .notification.error {
+            border-left-color: #f56565;
+        }
+
+        .notification.info {
+            border-left-color: #667eea;
+        }
+
+        .notification-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .notification-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #a0aec0;
+            padding: 0;
+            transition: color 0.3s ease;
+        }
+
+        .notification-close:hover {
+            color: #718096;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 1rem;
+            }
+            
+            .header {
+                padding: 1.5rem;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .grid {
+                grid-template-columns: 1fr;
+            }
+
+            .section-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .card-controls {
+                flex-direction: column;
+            }
+
+            .control-btn {
+                min-width: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>
+            <i class="fas fa-city"></i>
+            Gateway Cidade Inteligente
+        </h1>
+    </div>
+
+    <div class="container">
+        <!-- Dashboard Stats -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-header">
+                    <span class="stat-title">Dispositivos Online</span>
+                    <div class="stat-icon" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                        <i class="fas fa-network-wired"></i>
+                    </div>
+                </div>
+                <div class="stat-value" id="total-devices">0</div>
+                <div class="stat-label">Dispositivos conectados</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-header">
+                    <span class="stat-title">Temperatura Atual</span>
+                    <div class="stat-icon" style="background: linear-gradient(135deg, #f56565 0%, #e53e3e 100%);">
+                        <i class="fas fa-thermometer-half"></i>
+                    </div>
+                </div>
+                <div class="stat-value" id="current-temperature">--°C</div>
+                <div class="stat-label">Última leitura</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-header">
+                    <span class="stat-title">Qualidade do Ar</span>
+                    <div class="stat-icon" style="background: linear-gradient(135deg, #38a169 0%, #2f855a 100%);">
+                        <i class="fas fa-wind"></i>
+                    </div>
+                </div>
+                <div class="stat-value" id="air-quality">BOA</div>
+                <div class="stat-label">Estado atual</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-header">
+                    <span class="stat-title">Sistema</span>
+                    <div class="stat-icon" style="background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);">
+                        <i class="fas fa-heartbeat"></i>
+                    </div>
+                </div>
+                <div class="stat-value status-online" id="system-status">ONLINE</div>
+                <div class="stat-label">Todos os serviços ativos</div>
+            </div>
+        </div>
+
+        <!-- Dispositivos -->
+        <div class="section">
+            <div class="section-header">
+                <h2 class="section-title">
+                    <i class="fas fa-microchip"></i>
+                    Dispositivos Conectados
+                </h2>
+                <div class="header-actions">
+                    <button class="btn" onclick="atualizarDispositivos()">
+                        <i class="fas fa-sync-alt"></i>
+                        Atualizar
+                    </button>
+                    <button class="btn btn-success" onclick="descobrirDispositivos()">
+                        <i class="fas fa-search"></i>
+                        Descobrir
+                    </button>
+                </div>
+            </div>
+            <div id="devices-container" class="grid">
+                <div class="loading">
+                    <i class="fas fa-spinner"></i>
+                    <p>Carregando dispositivos...</p>
+                    <small>Conectando com o sistema...</small>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sensores -->
+        <div class="section">
+            <div class="section-header">
+                <h2 class="section-title">
+                    <i class="fas fa-chart-line"></i>
+                    Monitoramento de Sensores
+                </h2>
+                <div class="header-actions">
+                    <button class="btn" onclick="atualizarSensores()">
+                        <i class="fas fa-sync-alt"></i>
+                        Atualizar
+                    </button>
+                </div>
+            </div>
+            <div id="sensors-container" class="grid">
+                <div class="loading">
+                    <i class="fas fa-spinner"></i>
+                    <p>Carregando sensores...</p>
+                    <small>Obtendo dados em tempo real...</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        console.log('🚀 Gateway Cidade Inteligente - Dashboard Avançado');
+
+        // API Helper com URLs corretas
+        class GatewayAPI {
+            static async get(endpoint) {
+                try {
+                    console.log(`🔄 GET ${endpoint}`);
+                    const response = await fetch(endpoint);
+                    
+                    if (!response.ok) {
+                        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                    }
+                    
+                    const data = await response.json();
+                    console.log(`✅ Dados recebidos:`, data);
+                    return data;
+                } catch (error) {
+                    console.error(`❌ Erro na API ${endpoint}:`, error);
+                    throw error;
+                }
+            }
+
+            static async post(endpoint, data) {
+                try {
+                    console.log(`🔄 POST ${endpoint}`, data);
+                    const response = await fetch(endpoint, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(data),
+                    });
+                    
+                    if (!response.ok) {
+                        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                    }
+                    
+                    const result = await response.json();
+                    console.log(`✅ Resposta recebida:`, result);
+                    return result;
+                } catch (error) {
+                    console.error(`❌ Erro na API ${endpoint}:`, error);
+                    throw error;
+                }
+            }
+        }
+
+        // Notification System
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.innerHTML = `
+                <div class="notification-content">
+                    <span>${message}</span>
+                    <button class="notification-close" onclick="this.parentElement.parentElement.remove()">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            `;
+
+            document.body.appendChild(notification);
+            setTimeout(() => notification.classList.add('show'), 100);
+            setTimeout(() => {
+                if (notification.parentElement) {
+                    notification.classList.remove('show');
+                    setTimeout(() => notification.remove(), 400);
+                }
+            }, 5000);
+        }
+
+        // Device Controls
+        async function controlarDispositivo(deviceId, tipo, acao, params = {}) {
+            try {
+                showNotification(`⚡ Executando ${acao} em ${deviceId}...`, 'info');
+                
+                const data = { acao, ...params };
+                let endpoint = '';
+                
+                switch (tipo.toLowerCase()) {
+                    case 'camera':
+                        endpoint = `/api/camera/${deviceId}/controle`;
+                        break;
+                    case 'poste':
+                        endpoint = `/api/poste/${deviceId}/controle`;
+                        break;
+                    case 'semaforo':
+                        endpoint = `/api/semaforo/${deviceId}/controle`;
+                        break;
+                    default:
+                        endpoint = `/api/dispositivos/${deviceId}/controlar`;
+                }
+
+                const result = await GatewayAPI.post(endpoint, data);
+                showNotification(`✅ ${tipo} ${deviceId}: ${acao} executado com sucesso!`, 'success');
+                
+                // Atualizar dados após controle
+                setTimeout(() => {
+                    atualizarDispositivos();
+                }, 1500);
+                
+            } catch (error) {
+                showNotification(`❌ Erro ao controlar ${tipo}: ${error.message}`, 'error');
+            }
+        }
+
+        // Create Device Card com controles completos
+        function createDeviceCard(device) {
+            const { id, tipo, status, localizacao, ip, porta_grpc, endereco, ultima_atualizacao } = device;
+            
+            let badgeClass = 'badge-sensor';
+            let controls = '';
+            let intensityControl = '';
+            
+            switch (tipo?.toLowerCase()) {
+                case 'camera':
+                    badgeClass = 'badge-camera';
+                    controls = `
+                        <button class="control-btn btn-success" onclick="controlarDispositivo('${id}', 'camera', 'ligar')" style="background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);">
+                            <i class="fas fa-power-off"></i> Ligar
+                        </button>
+                        <button class="control-btn btn-danger" onclick="controlarDispositivo('${id}', 'camera', 'desligar')" style="background: linear-gradient(135deg, #f56565 0%, #e53e3e 100%);">
+                            <i class="fas fa-power-off"></i> Desligar
+                        </button>
+                        <button class="control-btn btn-warning" onclick="controlarDispositivo('${id}', 'camera', 'gravar')" style="background: linear-gradient(135deg, #ed8936 0%, #dd6b20 100%);">
+                            <i class="fas fa-record-vinyl"></i> Gravar
+                        </button>
+                        <button class="control-btn" onclick="controlarDispositivo('${id}', 'camera', 'parar_gravacao')" style="background: linear-gradient(135deg, #a0aec0 0%, #718096 100%);">
+                            <i class="fas fa-stop"></i> Parar
+                        </button>
+                    `;
+                    break;
+                case 'poste':
+                    badgeClass = 'badge-poste';
+                    intensityControl = `
+                        <div class="intensity-control">
+                            <label style="font-weight: 600; color: #2d3748; margin-bottom: 0.5rem; display: block;">
+                                <i class="fas fa-sun"></i> Intensidade da Luz
+                            </label>
+                            <input type="range" min="0" max="100" value="50" class="intensity-slider" 
+                                   id="intensity-${id}" onchange="updateIntensity('${id}', this.value)">
+                            <div class="intensity-value" id="intensity-value-${id}">50%</div>
+                        </div>
+                    `;
+                    controls = `
+                        <button class="control-btn btn-success" onclick="controlarDispositivo('${id}', 'poste', 'ligar')" style="background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);">
+                            <i class="fas fa-lightbulb"></i> Ligar
+                        </button>
+                        <button class="control-btn btn-secondary" onclick="controlarDispositivo('${id}', 'poste', 'desligar')" style="background: linear-gradient(135deg, #a0aec0 0%, #718096 100%);">
+                            <i class="fas fa-lightbulb"></i> Desligar
+                        </button>
+                        <button class="control-btn" onclick="setIntensity('${id}', 25)" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                            <i class="fas fa-adjust"></i> 25%
+                        </button>
+                        <button class="control-btn" onclick="setIntensity('${id}', 100)" style="background: linear-gradient(135deg, #ed8936 0%, #dd6b20 100%);">
+                            <i class="fas fa-sun"></i> 100%
+                        </button>
+                    `;
+                    break;
+                case 'semaforo':
+                    badgeClass = 'badge-semaforo';
+                    controls = `
+                        <button class="control-btn btn-success" onclick="controlarDispositivo('${id}', 'semaforo', 'verde')" style="background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);">
+                            <i class="fas fa-circle" style="color: #22c55e;"></i> Verde
+                        </button>
+                        <button class="control-btn btn-warning" onclick="controlarDispositivo('${id}', 'semaforo', 'amarelo')" style="background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);">
+                            <i class="fas fa-circle" style="color: #eab308;"></i> Amarelo
+                        </button>
+                        <button class="control-btn btn-danger" onclick="controlarDispositivo('${id}', 'semaforo', 'vermelho')" style="background: linear-gradient(135deg, #f56565 0%, #e53e3e 100%);">
+                            <i class="fas fa-circle" style="color: #ef4444;"></i> Vermelho
+                        </button>
+                        <button class="control-btn" onclick="controlarDispositivo('${id}', 'semaforo', 'automatico')" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                            <i class="fas fa-magic"></i> Automático
+                        </button>
+                    `;
+                    break;
+                default:
+                    controls = `
+                        <div style="text-align: center; color: #718096; padding: 1rem;">
+                            <i class="fas fa-cog"></i>
+                            <p>Dispositivo disponível para controle</p>
+                        </div>
+                    `;
+            }
+
+            const statusClass = status === 'online' ? 'status-online' : 'status-offline';
+            const statusIcon = status === 'online' ? 'fas fa-circle' : 'fas fa-exclamation-triangle';
+            
+            return `
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <i class="fas fa-microchip" style="color: #667eea; margin-right: 0.5rem;"></i>
+                            ${id || 'Dispositivo'}
+                        </h3>
+                        <span class="badge ${badgeClass}">${tipo || 'Desconhecido'}</span>
+                    </div>
+                    <div class="card-info">
+                        <p><strong><i class="fas fa-info-circle"></i> Status:</strong> 
+                           <span class="${statusClass}">
+                               <i class="${statusIcon}"></i> ${status?.toUpperCase() || 'DESCONHECIDO'}
+                           </span>
+                        </p>
+                        <p><strong><i class="fas fa-network-wired"></i> IP:</strong> <code>${ip || 'N/A'}</code></p>
+                        <p><strong><i class="fas fa-plug"></i> Porta gRPC:</strong> <code>${porta_grpc || 'N/A'}</code></p>
+                        <p><strong><i class="fas fa-map-marker-alt"></i> Localização:</strong> ${localizacao || endereco || 'N/A'}</p>
+                    </div>
+                    ${intensityControl}
+                    <div class="card-controls">
+                        ${controls}
+                    </div>
+                    <div class="timestamp">
+                        <i class="fas fa-clock"></i>
+                        Última atualização: ${ultima_atualizacao ? new Date(ultima_atualizacao).toLocaleString('pt-BR') : 'N/A'}
+                    </div>
+                </div>
+            `;
+        }
+
+        // Create Sensor Card com informações detalhadas
+        function createSensorCard(sensor) {
+            const { id, tipo, valor, unidade, status, localizacao, ultima_leitura, co2, pm25, qualidade } = sensor;
+            
+            let valueClass = '';
+            let displayValue = '--';
+            let displayUnit = '';
+            let extraInfo = '';
+            let icon = 'fas fa-thermometer-half';
+            
+            if (valor !== null && valor !== undefined) {
+                if (tipo === 'temperatura') {
+                    valueClass = 'temperature';
+                    displayValue = valor.toFixed(1);
+                    displayUnit = '°C';
+                    icon = 'fas fa-thermometer-half';
+                    
+                    // Análise da temperatura
+                    let tempStatus = '';
+                    if (valor < 15) tempStatus = '❄️ Muito Frio';
+                    else if (valor < 25) tempStatus = '🌤️ Agradável';
+                    else if (valor < 35) tempStatus = '☀️ Quente';
+                    else tempStatus = '🔥 Muito Quente';
+                    
+                    extraInfo = `<p><strong>Análise:</strong> ${tempStatus}</p>`;
+                    
+                } else if (tipo === 'qualidade_ar') {
+                    valueClass = 'air-quality';
+                    displayValue = qualidade || valor;
+                    displayUnit = '';
+                    icon = 'fas fa-wind';
+                    
+                    // Informações detalhadas do ar
+                    extraInfo = `
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin: 1rem 0; padding: 1rem; background: #f8f9fa; border-radius: 8px;">
+                            <div style="text-align: center;">
+                                <div style="font-size: 1.5rem; font-weight: bold; color: #667eea;">${co2 || 'N/A'}</div>
+                                <div style="font-size: 0.8rem; color: #718096;">CO2 (ppm)</div>
+                            </div>
+                            <div style="text-align: center;">
+                                <div style="font-size: 1.5rem; font-weight: bold; color: #f56565;">${pm25 || 'N/A'}</div>
+                                <div style="font-size: 0.8rem; color: #718096;">PM2.5 (µg/m³)</div>
+                            </div>
+                        </div>
+                    `;
+                }
+            }
+
+            const statusClass = status === 'online' ? 'status-online' : 'status-offline';
+            const statusIcon = status === 'online' ? 'fas fa-circle' : 'fas fa-exclamation-triangle';
+            
+            return `
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <i class="${icon}" style="color: #667eea; margin-right: 0.5rem;"></i>
+                            ${id || 'Sensor'}
+                        </h3>
+                        <span class="badge badge-sensor">${tipo?.replace('_', ' ').toUpperCase() || 'SENSOR'}</span>
+                    </div>
+                    <div class="sensor-value ${valueClass}">
+                        ${displayValue} ${displayUnit}
+                    </div>
+                    <div class="card-info">
+                        <p><strong><i class="fas fa-info-circle"></i> Status:</strong> 
+                           <span class="${statusClass}">
+                               <i class="${statusIcon}"></i> ${status?.toUpperCase() || 'ONLINE'}
+                           </span>
+                        </p>
+                        <p><strong><i class="fas fa-map-marker-alt"></i> Localização:</strong> ${localizacao || 'N/A'}</p>
+                        ${extraInfo}
+                    </div>
+                    <div class="timestamp">
+                        <i class="fas fa-clock"></i>
+                        Última leitura: ${ultima_leitura ? new Date(ultima_leitura).toLocaleString('pt-BR') : 'N/A'}
+                    </div>
+                </div>
+            `;
+        }
+
+        // Funções de controle de intensidade
+        function updateIntensity(deviceId, value) {
+            document.getElementById(`intensity-value-${deviceId}`).textContent = `${value}%`;
+        }
+
+        function setIntensity(deviceId, intensity) {
+            const slider = document.getElementById(`intensity-${deviceId}`);
+            if (slider) {
+                slider.value = intensity;
+                updateIntensity(deviceId, intensity);
+            }
+            controlarDispositivo(deviceId, 'poste', 'intensidade', { intensidade: intensity });
+        }
+
+        // Update Devices com URLs corretas
+        async function atualizarDispositivos() {
+            console.log('🔄 Atualizando dispositivos...');
+            const container = document.getElementById('devices-container');
+            
+            container.innerHTML = `
+                <div class="loading">
+                    <i class="fas fa-spinner"></i>
+                    <p>Carregando dispositivos...</p>
+                    <small>Conectando com dispositivos IoT...</small>
+                </div>
+            `;
+            
+            try {
+                // URL correta do backend
+                const data = await GatewayAPI.get('/api/dispositivos');
+                
+                if (data && data.dispositivos && data.dispositivos.length > 0) {
+                    container.innerHTML = data.dispositivos
+                        .map(device => createDeviceCard(device))
+                        .join('');
+                    
+                    // Update stats
+                    document.getElementById('total-devices').textContent = data.dispositivos.length;
+                    
+                    showNotification(`✅ ${data.dispositivos.length} dispositivos carregados com sucesso!`, 'success');
+                    console.log(`✅ ${data.dispositivos.length} dispositivos carregados`);
+                } else {
+                    container.innerHTML = `
+                        <div class="error">
+                            <i class="fas fa-search"></i>
+                            <h3>Nenhum dispositivo encontrado</h3>
+                            <p>Não há dispositivos conectados no momento</p>
+                            <button class="btn btn-success" onclick="descobrirDispositivos()" style="margin-top: 1rem;">
+                                <i class="fas fa-search"></i>
+                                Descobrir Dispositivos
+                            </button>
+                        </div>
+                    `;
+                    document.getElementById('total-devices').textContent = '0';
+                }
+            } catch (error) {
+                console.error('❌ Erro ao carregar dispositivos:', error);
+                
+                // Em caso de erro, mostrar dados de exemplo para demonstração
+                const mockDevices = [
+                    {
+                        id: 'CAM_001',
+                        tipo: 'camera',
+                        status: 'online',
+                        ip: '192.168.1.100',
+                        porta_grpc: 50051,
+                        localizacao: 'Praça Central',
+                        ultima_atualizacao: new Date().toISOString()
+                    },
+                    {
+                        id: 'POST_001',
+                        tipo: 'poste',
+                        status: 'online',
+                        ip: '192.168.1.101',
+                        porta_grpc: 50052,
+                        localizacao: 'Rua Principal',
+                        ultima_atualizacao: new Date().toISOString()
+                    },
+                    {
+                        id: 'SEM_001',
+                        tipo: 'semaforo',
+                        status: 'offline',
+                        ip: '192.168.1.102',
+                        porta_grpc: 50053,
+                        localizacao: 'Cruzamento A',
+                        ultima_atualizacao: new Date().toISOString()
+                    }
+                ];
+                
+                container.innerHTML = mockDevices
+                    .map(device => createDeviceCard(device))
+                    .join('');
+                
+                document.getElementById('total-devices').textContent = mockDevices.length;
+                showNotification(`⚠️ Usando dados de demonstração - Erro: ${error.message}`, 'error');
+            }
+        }
+
+        // Update Sensors com URLs corretas
+        async function atualizarSensores() {
+            console.log('🔄 Atualizando sensores...');
+            const container = document.getElementById('sensors-container');
+            
+            container.innerHTML = `
+                <div class="loading">
+                    <i class="fas fa-spinner"></i>
+                    <p>Carregando sensores...</p>
+                    <small>Coletando dados ambientais...</small>
+                </div>
+            `;
+            
+            try {
+                // URL correta do backend
+                const data = await GatewayAPI.get('/api/sensores/dados');
+                console.log('📊 Dados recebidos dos sensores:', data);
+                
+                let sensores = [];
+                
+                // Processar dados de temperatura
+                if (data.temperatura && Array.isArray(data.temperatura)) {
+                    data.temperatura.forEach(temp => {
+                        sensores.push({
+                            id: temp.sensor_id || 'TEMP_001',
+                            tipo: 'temperatura',
+                            valor: temp.valor,
+                            unidade: '°C',
+                            status: 'online',
+                            localizacao: temp.localizacao || 'N/A',
+                            ultima_leitura: temp.timestamp
+                        });
+                    });
+                }
+                
+                // Processar dados de qualidade do ar
+                if (data.qualidade_ar && Array.isArray(data.qualidade_ar)) {
+                    data.qualidade_ar.forEach(ar => {
+                        sensores.push({
+                            id: ar.sensor_id || 'AR_001',
+                            tipo: 'qualidade_ar',
+                            valor: ar.valor,
+                            qualidade: ar.qualidade,
+                            co2: ar.co2,
+                            pm25: ar.pm25,
+                            status: 'online',
+                            localizacao: ar.localizacao || 'N/A',
+                            ultima_leitura: ar.timestamp
+                        });
+                    });
+                }
+                
+                if (sensores.length > 0) {
+                    container.innerHTML = sensores
+                        .map(sensor => createSensorCard(sensor))
+                        .join('');
+                    
+                    // Update stats from sensor data
+                    const tempSensor = sensores.find(s => s.tipo === 'temperatura');
+                    if (tempSensor && tempSensor.valor) {
+                        const tempElement = document.getElementById('current-temperature');
+                        if (tempElement) {
+                            tempElement.textContent = `${tempSensor.valor.toFixed(1)}°C`;
+                        }
+                    }
+                    
+                    const airSensor = sensores.find(s => s.tipo === 'qualidade_ar');
+                    if (airSensor && airSensor.qualidade) {
+                        const airElement = document.getElementById('air-quality');
+                        if (airElement) {
+                            airElement.textContent = airSensor.qualidade;
+                        }
+                    }
+                    
+                    showNotification(`✅ ${sensores.length} sensores atualizados com sucesso!`, 'success');
+                    console.log(`✅ ${sensores.length} sensores carregados`);
+                } else {
+                    container.innerHTML = `
+                        <div class="error">
+                            <i class="fas fa-thermometer-half"></i>
+                            <h3>Nenhum sensor encontrado</h3>
+                            <p>Não há dados de sensores disponíveis</p>
+                        </div>
+                    `;
+                    console.log('⚠️ Nenhum sensor encontrado nos dados');
+                }
+            } catch (error) {
+                console.error('❌ Erro ao carregar sensores:', error);
+                
+                // Em caso de erro, mostrar dados de exemplo
+                const mockSensors = [
+                    {
+                        id: 'TEMP_001',
+                        tipo: 'temperatura',
+                        valor: 25.5,
+                        unidade: '°C',
+                        status: 'online',
+                        localizacao: 'Centro da Cidade',
+                        ultima_leitura: new Date().toISOString()
+                    },
+                    {
+                        id: 'AR_001',
+                        tipo: 'qualidade_ar',
+                        valor: 80,
+                        qualidade: 'BOA',
+                        co2: 400,
+                        pm25: 15,
+                        status: 'online',
+                        localizacao: 'Praça Central',
+                        ultima_leitura: new Date().toISOString()
+                    }
+                ];
+                
+                container.innerHTML = mockSensors
+                    .map(sensor => createSensorCard(sensor))
+                    .join('');
+                
+                // Update stats
+                document.getElementById('current-temperature').textContent = '25.5°C';
+                document.getElementById('air-quality').textContent = 'BOA';
+                
+                showNotification(`⚠️ Usando dados de demonstração - Erro: ${error.message}`, 'error');
+            }
+        }
+
+        // Discover Devices
+        async function descobrirDispositivos() {
+            try {
+                showNotification('🔍 Descobrindo novos dispositivos...', 'info');
+                
+                // URL correta para descoberta
+                const result = await GatewayAPI.post('/api/discovery/descobrir', {});
+                showNotification(`✅ Descoberta concluída! ${result.encontrados || 0} dispositivos encontrados`, 'success');
+                
+                setTimeout(() => {
+                    atualizarDispositivos();
+                }, 2000);
+            } catch (error) {
+                showNotification(`❌ Erro na descoberta: ${error.message}`, 'error');
+            }
+        }
+
+        // Initialize Dashboard
+        function inicializarDashboard() {
+            console.log('🚀 Inicializando Dashboard Avançado...');
+            
+            try {
+                // Load initial data
+                atualizarDispositivos();
+                atualizarSensores();
+                
+                // Atualizar status do sistema após carregamento inicial
+                setTimeout(() => {
+                    const systemStatus = document.getElementById('system-status');
+                    if (systemStatus) {
+                        systemStatus.textContent = 'ONLINE';
+                        systemStatus.className = 'stat-value status-online';
+                    }
+                }, 3000);
+                
+                // Set up auto-refresh
+                setInterval(() => {
+                    console.log('🔄 Auto-refresh sensores...');
+                    atualizarSensores();
+                }, 15000); // 15 seconds
+                
+                setInterval(() => {
+                    console.log('🔄 Auto-refresh dispositivos...');
+                    atualizarDispositivos();
+                }, 30000); // 30 seconds
+                
+                console.log('✅ Dashboard inicializado com sucesso!');
+                showNotification('🎉 Dashboard inicializado com sucesso!', 'success');
+                
+            } catch (error) {
+                console.error('❌ Erro ao inicializar dashboard:', error);
+                showNotification('❌ Erro ao inicializar dashboard', 'error');
+            }
+        }
+
+        // Start when DOM is ready
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('📋 DOM carregado - Iniciando sistema avançado...');
+            inicializarDashboard();
+        });
+    </script>
+</body>
+</html>

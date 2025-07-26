@@ -1,0 +1,96 @@
+syntax = "proto3";
+
+package smart_city;
+
+// Mensagem vazia para ser usada nos métodos
+message Vazio {}
+
+// ================================
+// CAMERA
+// ================================
+message ConfigCamera {
+  string resolucao = 1; // "HD", "FullHD", "4K"
+}
+
+message StatusCamera {
+  bool ligada = 1;
+  string resolucao = 2;
+  bool gravando = 3;
+}
+
+service Camera {
+  rpc Ligar (Vazio) returns (Vazio) {}
+  rpc Desligar (Vazio) returns (Vazio) {}
+  rpc SetResolucao (ConfigCamera) returns (Vazio) {}
+  rpc IniciarGravacao (Vazio) returns (Vazio) {}
+  rpc PararGravacao (Vazio) returns (Vazio) {}
+  rpc getStatus (Vazio) returns (StatusCamera) {}
+}
+
+// ================================
+// POSTE (Iluminação Pública)
+// ================================
+message StatusPoste {
+  bool lampada_ligada = 1;
+  int32 intensidade = 2; // 0-100%
+}
+
+message ConfigPoste {
+  int32 intensidade = 1; // 0-100%
+}
+
+service Poste {
+  rpc LigarLampada (Vazio) returns (Vazio) {}
+  rpc DesligarLampada (Vazio) returns (Vazio) {}
+  rpc SetIntensidade (ConfigPoste) returns (Vazio) {}
+  rpc getStatus (Vazio) returns (StatusPoste) {}
+}
+
+// ================================
+// SEMÁFORO
+// ================================
+message StatusSemaforo {
+  string estado_atual = 1; // "VERDE", "AMARELO", "VERMELHO"
+  int32 tempo_vermelho = 2; // segundos
+  int32 tempo_verde = 3; // segundos
+  int32 tempo_amarelo = 4; // segundos
+  bool funcionando = 5;
+}
+
+message ConfigSemaforo {
+  int32 tempo_vermelho = 1; // segundos
+  int32 tempo_verde = 2; // segundos
+  int32 tempo_amarelo = 3; // segundos
+}
+
+service Semaforo {
+  rpc Ligar (Vazio) returns (Vazio) {}
+  rpc Desligar (Vazio) returns (Vazio) {}
+  rpc SetTempos (ConfigSemaforo) returns (Vazio) {}
+  rpc ModoEmergencia (Vazio) returns (Vazio) {}
+  rpc getStatus (Vazio) returns (StatusSemaforo) {}
+}
+
+// ================================
+// SENSORES
+// ================================
+message DadosTemperatura {
+  float temperatura = 1;
+  string timestamp = 2;
+}
+
+message DadosQualidadeAr {
+  float co2 = 1; // ppm
+  float pm25 = 2; // µg/m³
+  float pm10 = 3; // µg/m³
+  string timestamp = 4;
+}
+
+// Serviços de sensores (se necessário para status)
+service SensorTemperatura {
+  rpc getUltimaLeitura (Vazio) returns (DadosTemperatura) {}
+}
+
+service SensorQualidadeAr {
+  rpc getUltimaLeitura (Vazio) returns (DadosQualidadeAr) {}
+}
